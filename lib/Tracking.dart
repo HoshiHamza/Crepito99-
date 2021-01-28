@@ -1,37 +1,34 @@
-# Crepito99
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crepito99/BottomNavigationBar.dart';
+import 'package:crepito99/Profile_page.dart';
+import 'package:crepito99/home_page.dart';
+import 'package:crepito99/login_screen.dart';
+import 'package:crepito99/my_orders.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:progress_indicators/progress_indicators.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-A food ordering Mobile Application for both Android & iOS built on Flutter for a Quick Service Restaurant Ćrepito99.
+var progress = [
+  [1, 0, 0, 0],
+  [2, 1, 0, 0],
+  [2, 2, 1, 0],
+  [2, 2, 2, 1],
+  [2, 2, 2, 2],
+];
 
-# Motivation
+class TrackOrder extends StatefulWidget {
+  String order;
+  TrackOrder(this.order);
+  @override
+  _TrackOrderState createState() => _TrackOrderState(order);
+}
 
-This project intends to make a holistic mobile phone application for a Quick Service Restaurant, Crepito99, which is based in Valencia Town, Lahore. The application will enable customers to directly order food from Crepito 99 online without any intervention by any third party application.
-
-# Code style
-
-A standard coding style is used in the development. A mixture of object-oriented, and procedural programming is used.
-
-# Tech/framework used
-
-Built in Flutter using dart programming language. Backend and Database managed at Firebase implemented with Flutter.
-
-# Features
-
-1. Make User Profile
-2. View Latest Deals
-3. View Menu Items
-4. Add Items in Cart
-5. Place Order
-6. Redeem Loyalty Points
-7. View Order Status
-8. View Previous Orders 
-
-# Code Example
-
-    class _TrackOrderState extends State<TrackOrder> {
-      String order;
-    _TrackOrderState(this.order);
-    @override
-    Widget build(BuildContext context) {
+class _TrackOrderState extends State<TrackOrder> {
+  String order;
+  _TrackOrderState(this.order);
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[
@@ -84,6 +81,7 @@ Built in Flutter using dart programming language. Backend and Database managed a
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) return Text("loading");
+
                 return Center(
                   child: Column(children: <Widget>[
                     CheckList(0, progress[snapshot.data["status"]][0],
@@ -141,45 +139,49 @@ Built in Flutter using dart programming language. Backend and Database managed a
   }
 }
 
-# Installation
+class CheckList extends StatelessWidget {
+  int record;
+  int currentState;
 
-1. Install Flutter.
-2. Install Android Studio.
-3. Add flutter plugin to Android Studio.
-4. Clone [this](https://github.com/mrsahibzada/Crepito99) GITHUB repository and add it to your Flutter Project.
-5. Run the project on either an iOS or an Android emulator.
+  String detail;
+  CheckList(this.record, this.currentState, this.detail);
+  @override
+  Widget build(BuildContext context) {
+    Widget myWidget;
+    Color myColor;
+    if (currentState == 1) {
+      myWidget = JumpingDotsProgressIndicator(
+        fontSize: 20.0,
+      );
+      myColor = Colors.red;
+    } else {
+      if (currentState == 0) {
+        myColor = Colors.grey;
+        myWidget = Icon(Icons.check_box_outline_blank, color: myColor);
+      } else {
+        myColor = Color(0xFFDB2C27);
+        myWidget = Icon(
+          Icons.check_box,
+          color: Color(0xFFDB2C27),
+        );
+      }
+    }
 
-# API Reference
-
-API's generated from Google Firebase for User Authentication, Database and Storage for the efficient communication of the app with its cashier [web-app portal](https://github.com/MuteeullahBaig/crepito99_web_app).
-
-# How to use?
-
-1. Install Flutter.
-2. Install Android Studio.
-3. Add flutter plugin to Android Studio.
-4. Clone [this](https://github.com/mrsahibzada/Crepito99) GITHUB repository and add it to your Flutter Project.
-5. Run the project on either an iOS or an Android emulator.
-6. Build an apk Android app using 'flutter build apk'.
-7. It will be located in build/app/outputs/apk/release/app-release.apk.
-8. Download and install it on an Android Device.
-9. Run and kindly report if any bugs found.
-
-# Credits
-
-Contributors:
-
-Sahibzada Sarmad Mansoor Bugvi
-https://github.com/mrsahibzada
-
-Hoshi Hamza
-https://github.com/HoshiHamza
-
-Ahmad Hassaan Mirza
-https://github.com/AhmedHassaanMirza1
-
-Muteeullah Baig
-https://github.com/MuteeullahBaig
-
-Qutaiba Rohan Ul Haq
-https://github.com/QutaibaRohan
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(28, 63.0, 0, 0),
+      child: Row(
+        children: <Widget>[
+          myWidget,
+          SizedBox(
+            width: 20,
+          ),
+          Text(
+            detail,
+            style:
+                TextStyle(fontSize: 18, color: myColor, fontFamily: 'Roboto'),
+          ),
+        ],
+      ),
+    );
+  }
+}
